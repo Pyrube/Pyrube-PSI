@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pyrube-log4x PUBLIC
+          "-//Pyrube Team//DTD Log4x Configuration 1.0//EN"
+          "dtd/pyrube-log4x_1_0.dtd">
+
+<pyrube-config>
+	<!--== parameters for pyrube-log4x ==-->
+	<parameters>
+		<param name="LOG4X_PATH">E:/Projects/logs/psi</param>
+		<param name="LOG4X_LEVEL">debug</param>
+		<param name="LOG4T3P_LEVEL">error</param>
+	</parameters>
+	<!--== pyrube-log4x configuration content ==-->
+	<config-content>
+		<log4x>
+			<log4j:configuration>
+				<appender name="console" class="org.apache.log4j.ConsoleAppender">
+					<layout class="org.apache.log4j.PatternLayout">
+						<param name="ConversionPattern" value="%-6r %d{ISO8601} %5p %t %c - %m%n"/>
+					</layout>
+				</appender>
+				<appender name="pyrube-log4x" class="org.apache.log4j.DailyRollingFileAppender">
+					<param name="File" value="${LOG4X_PATH}/psi.log"/>
+					<param name="append" value="true"/>
+					<param name="DatePattern" value="'.'yyyy-MM-dd'.log'"/>
+					<layout class="org.apache.log4j.PatternLayout">
+						<param name="ConversionPattern" value="%-6r %d{ISO8601} %5p %t %c - %m%n"/>
+					</layout>
+				</appender>
+				<logger name="com.pyrube" additivity="false">
+					<level value="${LOG4X_LEVEL}"/>
+					<appender-ref ref="console"/>
+					<appender-ref ref="pyrube-log4x"/>
+				</logger>
+				<logger name="org.hibernate" additivity="false">
+					<level value="${LOG4T3P_LEVEL}"/>
+					<appender-ref ref="console"/>
+					<appender-ref ref="pyrube-log4x"/>
+				</logger>
+				<logger name="org.springframework" additivity="false">
+					<level value="${LOG4T3P_LEVEL}"/>
+					<appender-ref ref="console"/>
+					<appender-ref ref="pyrube-log4x"/>
+				</logger>
+				<logger name="org.apache" additivity="false">
+					<level value="debug"/>
+					<appender-ref ref="console"/>
+					<appender-ref ref="pyrube-log4x"/>
+				</logger>
+				<root>
+					<priority value="${LOG4X_LEVEL}"/>
+					<appender-ref ref="console"/>
+				</root>
+			</log4j:configuration>
+		</log4x>
+	</config-content>
+</pyrube-config>

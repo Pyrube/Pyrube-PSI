@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pyrube-config name="WEA">
+	<parameters>
+		<param name="DEPLOYMENT_ENV">DEV</param>
+		<param name="RESOURCES_PATH">/resources/com/pyrube/</param>
+		<param name="OFFICIAL_WEBSITE_ADDR">https://github.com/pyrube</param>
+		<param name="COPYRIGHT_YEAR">2024</param>
+		<param name="APP_COUNTRY_DEFAULT">CN</param>
+		<param name="APP_LOCALE_DEFAULT">zh_CN</param>
+		<param name="APP_CURRENCY_DEFAULT">CNY</param>
+		<param name="APP_PAGEBAR">prene</param>
+		<param name="PAGE_SIZE_DEFAULT">10</param>
+		<param name="STAT_PROP_DEFAULT">dataStatus</param>
+		<param name="FIRST_FISCALMONTH">4</param>
+		<param name="SETUP_DUALCONTROL">false</param>
+	</parameters>
+	<configurators>
+		<configurator name="AppConfig">
+			<class>com.pyrube.one.app.AppConfig</class>
+			<configPath name="AppConfig">AppConfig</configPath>
+		</configurator>
+		<configurator name="CacheConfig">
+			<class>com.pyrube.one.app.cache.CacheConfig</class>
+			<configPath name="CacheConfig">CacheConfig</configPath>
+		</configurator>
+		<configurator name="ConcurrentConfig">
+			<class>com.pyrube.one.util.concurrent.ConcurrentConfig</class>
+			<configPath name="ConcurrentConfig">ConcurrentConfig</configPath>
+		</configurator>
+		<configurator name="I18nConfig">
+			<class>com.pyrube.one.app.i18n.I18nConfig</class>
+			<configPath name="I18nConfig">I18nConfig</configPath>
+		</configurator>
+		<configurator name="MenuConfig">
+			<class>com.pyrube.one.app.menu.MenuConfig</class>
+			<configPath name="MenuConfig">MenuConfig</configPath>
+		</configurator>
+		<configurator name="TaskConfig">
+			<class>com.pyrube.one.app.task.TaskConfig</class>
+			<configPath name="TaskConfig">TaskConfig</configPath>
+		</configurator>
+		<configurator name="WeaConfig" default="true">
+			<class>com.pyrube.wea.WeaConfig</class>
+			<configPath name="WeaConfig">WeaConfig</configPath>
+		</configurator>
+	</configurators>
+	<!-- configuration content section  -->
+	<config-content>
+		<AppConfig>
+			<!-- applications information, comma-separated application codes list -->
+			<application name="WEA" env="${DEPLOYMENT_ENV}" desc="WEA Application">
+				<properties>
+					<param name="RESOURCES_PATH">${RESOURCES_PATH}</param>
+					<param name="OFFICIAL_WEBSITE_ADDR">${OFFICIAL_WEBSITE_ADDR}</param>
+					<param name="COPYRIGHT_YEAR">${COPYRIGHT_YEAR}</param>
+					<param name="APP_COUNTRY_DEFAULT">${APP_COUNTRY_DEFAULT}</param>
+					<param name="APP_CURRENCY_DEFAULT">${APP_CURRENCY_DEFAULT}</param>
+					<param name="APP_PAGEBAR">${APP_PAGEBAR}</param>
+					<param name="PAGE_SIZE_DEFAULT">${PAGE_SIZE_DEFAULT}</param>
+					<param name="STAT_PROP_DEFAULT">${STAT_PROP_DEFAULT}</param>
+					<param name="FIRST_FISCALMONTH">${FIRST_FISCALMONTH}</param>
+					<param name="SETUP_DUALCONTROL">${SETUP_DUALCONTROL}</param>
+				</properties>
+				<!-- application life cycle listeners implementing AppListner -->
+				<appListeners>
+					<listener>
+						<class>com.pyrube.one.app.AppCachePreloader</class>
+					</listener>
+					<listener>
+						<class>com.pyrube.one.app.task.TaskTimerStarter</class>
+					</listener>
+					<listener>
+						<class>com.pyrube.one.app.AppResourceFinalizer</class>
+					</listener>
+				</appListeners>
+			</application>
+			<!-- application security -->
+			<security>
+				<manager class="com.pyrube.common.security.DaoSecurityManager" />
+				<!-- password policy -->
+				<passwordPolicy enabled="true">
+					<minimumLength>1</minimumLength>
+					<maximumLength>16</maximumLength>
+					<specialChars><![CDATA[~`!@#$%^&*()-_=+{[]}\|;:'",<>.]]></specialChars>
+					<expiryAge>1</expiryAge> <!-- months -->
+					<maximumAttempts>3</maximumAttempts>
+					<lockingPeriod>15</lockingPeriod> <!-- minutes -->
+				</passwordPolicy>
+			</security>
+		</AppConfig>
+		<CacheConfig>
+			<notifier enabled="true">
+				<eventPublisher name="default">
+					<class>com.pyrube.one.app.cache.InappCacheEventPublisher</class>
+				</eventPublisher>
+			</notifier>
+			<applicationCache>
+				<local>
+					<cache name="fiscalYears" class="com.pyrube.dict.caches.FiscalYearsCacheable" preloaded="true" multiple="false" refreshInterval="864000">
+						<param name="range">-5,1</param>
+					</cache>
+					<cache name="quarters" class="com.pyrube.dict.caches.QuartersCacheable" preloaded="true" multiple="false" refreshInterval="864000">
+						<param name="quarters">1,2,3,4</param>
+					</cache>
+					<cache name="listChannels" class="com.pyrube.dict.caches.ListChannelsCacheable" preloaded="false" multiple="false" refreshInterval="864000" />
+					<cache name="listCountries" class="com.pyrube.one.app.cache.ListCountriesCacheable" preloaded="true" multiple="false" refreshInterval="864000">
+						<param name="countries">CN,HK,KR,JP,SG,IN,ID,US,CA,BR,AR,RU,GB,FR,DE,IT,ES,AU,EG</param>
+					</cache>
+					<cache name="listCurrencies" class="com.pyrube.one.app.cache.ListCurrenciesCacheable" preloaded="true" multiple="false" refreshInterval="864000">
+						<param name="currencies">CNY|2,EUR|2,GBP|2,HKD|2,JPY|0,KWD|3,USD|2</param>
+					</cache>
+					<cache name="mapCurrencies" class="com.pyrube.one.app.cache.MapCurrenciesCacheable" preloaded="true" multiple="false" refreshInterval="864000">
+						<param name="currencies">CNY|2,EUR|2,GBP|2,HKD|2,JPY|0,KWD|3,USD|2</param>
+					</cache>
+				</local>
+				<remote>
+				</remote>
+			</applicationCache>
+		</CacheConfig>
+		<ConcurrentConfig>
+			<runnerPools>
+				<runnerPool name="native" default="true" class="com.pyrube.one.util.concurrent.NativeConcurrentRunnerPool"/>
+			</runnerPools>
+		</ConcurrentConfig>
+		<I18nConfig>
+			<messageBundle class="com.pyrube.one.app.i18n.FileMessageBundle">
+				<param name="base">com.pyrube.common.resources.I18nMessages</param>
+			</messageBundle>
+			<locales factory="com.pyrube.one.app.i18n.locale.AppLocaleFactory">
+				<param name="locale">zh_CN</param>
+				<param name="default">${APP_LOCALE_DEFAULT}</param>
+			</locales>
+			<formats system="en_US">
+				<builders factory="com.pyrube.one.app.i18n.format.FormatBuilderFactory">
+					<param name="date">com.pyrube.one.app.i18n.format.DateFormatBuilder</param>
+					<param name="number">com.pyrube.one.app.i18n.format.NumberFormatBuilder</param>
+				</builders>
+				<patterns>
+					<param name="zh_CN">
+						<param name="separators">
+							<param name="dateSeparator">-</param>
+							<param name="timeSeparator">:</param>
+							<param name="groupSeparator">,</param>
+							<param name="decimalSeparator">.</param>
+						</param>
+						<param name="date">
+							<param name="longTimestampZ">yyyy-MM-dd HH:mm:ss:SSS Z</param>
+							<param name="longTimestamp">yyyy-MM-dd HH:mm:ss:SSS</param>
+							<param name="timestamp">yyyy-MM-dd HH:mm:ss</param>
+							<param name="date">yyyy-MM-dd</param>
+							<param name="month">yyyy-MM</param>
+							<param name="year">yyyy</param>
+							<param name="longTime">HH:mm:ss:SSS</param>
+							<param name="time">HH:mm:ss</param>
+							<param name="shortTime">HH:mm</param>
+							<param name="fiscalYear">'FY'yy</param>
+						</param>
+						<param name="number">
+							<param name="number">#.#</param>
+							<param name="integer">#0</param>
+							<param name="float">#0.0##############</param>
+							<param name="percent">#0.#%</param>
+							<param name="percent0">#0%</param>
+							<param name="percent1">#0.0%</param>
+							<param name="percent2">#0.00%</param>
+							<param name="amount">#0.00#</param>
+							<param name="money">#,##0.00#</param>
+							<param name="money0">#,##0</param>
+							<param name="money1">#,##0.0</param>
+							<param name="money2">#,##0.00</param>
+							<param name="money3">#,##0.000</param>
+						</param>
+						<param name="words">
+							<param name="periodLength">4</param>
+							<param name="piw">#$${g3}#$${p4}#$${p3}#$${p2}#$${p1}$${g2}#$${p4}#$${p3}#$${p2}#$${p1}$${g1}#$${p4}#$${p3}#$${p2}0$${p1}.#</param>
+						</param>
+					</param>
+					<param name="en_US">
+						<param name="separators">
+							<param name="dateSeparator">-</param>
+							<param name="timeSeparator">:</param>
+							<param name="groupSeparator">,</param>
+							<param name="decimalSeparator">.</param>
+						</param>
+						<param name="date">
+							<param name="longTimestampZ">yyyy-MM-dd HH:mm:ss:SSS Z</param>
+							<param name="longTimestamp">yyyy-MM-dd HH:mm:ss:SSS</param>
+							<param name="timestamp">yyyy-MM-dd HH:mm:ss</param>
+							<param name="date">yyyy-MM-dd</param>
+							<param name="month">yyyy-MM</param>
+							<param name="year">yyyy</param>
+							<param name="longTime">HH:mm:ss:SSS</param>
+							<param name="time">HH:mm:ss</param>
+							<param name="shortTime">HH:mm</param>
+							<param name="fiscalYear">'FY'yy</param>
+						</param>
+						<param name="number">
+							<param name="number">#.#</param>
+							<param name="integer">#0</param>
+							<param name="float">#0.0##############</param>
+							<param name="percent">#0.#%</param>
+							<param name="percent0">#0%</param>
+							<param name="percent1">#0.0%</param>
+							<param name="percent2">#0.00%</param>
+							<param name="amount">#0.00#</param>
+							<param name="money">#,##0.00#</param>
+							<param name="money0">#,##0</param>
+							<param name="money1">#,##0.0</param>
+							<param name="money2">#,##0.00</param>
+							<param name="money3">#,##0.000</param>
+						</param>
+						<param name="words">
+							<param name="periodLength">3</param>
+							<param name="piw">#$${g3}#$${p3}#$${p2}#$${p1}$${g2}#$${p3}#$${p2}#$${p1}$${g1}#$${p3}#$${p2}0$${p1}.#</param>
+						</param>
+					</param>
+				</patterns>
+			</formats>
+		</I18nConfig>
+		<MenuConfig>
+			<menu>
+				<item action="misc/main" mode="redirect" icon="home">menu.main</item>
+				<item icon="demo" access="hasAuthority('SYS:DEMO')">menu.demo
+					<item action="demo/sample" icon="sample">menu.demo.sample</item>
+				</item>
+				<item icon="admin" access="hasAuthority('SYS:ADM:MTN')">menu.admin
+					<item action="admin/user" icon="user" access="hasAuthority('SYS:ADM:USR_VEW')">menu.admin.user</item>
+				</item>
+				<item icon="transaction" access="hasAuthority('PSI:TXN:MTN')">menu.txn
+					<item action="txn/product" icon="product" access="hasAuthority('PSI:TXN:PROD_VEW')">menu.txn.product</item>
+					<item action="txn/plan" icon="plan" access="hasAuthority('PSI:TXN:SOP_VEW')">menu.txn.plan</item>
+					<item action="txn/sales" icon="sales">menu.txn.sales</item>
+					<item action="txn/inventory" icon="inventory">menu.txn.inventory</item>
+					<item action="txn/fee" icon="fee">menu.txn.fee</item>
+				</item>
+				<item action="user/home" mode="redirect" icon="profile">menu.profile</item>
+			</menu>
+			<navMenu>
+				<appNav>
+					<item action="misc/main" mode="redirect" icon="home">nav.main</item>
+					<item action="user/home" icon="profile">nav.profile</item>
+				</appNav>
+				<mainNav>
+					<item action="txn/product" icon="product">nav.product</item>
+					<item action="txn/sales" icon="sales">nav.sales</item>
+					<item action="txn/inventory" icon="inventory">nav.inventory</item>
+					<item action="txn/fee" icon="fee">nav.fee</item>
+				</mainNav>
+				<funcNav>
+					<item>sample
+						<item action="admin/user" icon="user">nav.user</item>
+					</item>
+				</funcNav>
+			</navMenu>
+		</MenuConfig>
+		<TaskConfig>
+			<manager>
+				<helper class="com.pyrube.one.app.task.InMemoryJobManagerHelper" />
+				<runnerPool>native</runnerPool>
+				<runningYears>10</runningYears>
+				<runningCount>50</runningCount>
+			</manager>
+			<timerTask>
+				<!-- global timer tasks will run at each timezone as below. -->
+				<global>
+					<!-- Start of Day -->
+					<jobGroup name="SOD" enabled="true" scheduleType="N" years="" months="" days="1-LAST" weekdays="" hours="7" minutes="30" period="" periodStart="2013-01-01">
+						<job name="SAMPLE" class="com.pyrube.one.app.task.DummyJobable" />
+					</jobGroup>
+					<!-- End of Day -->
+					<jobGroup name="EOD" enabled="true" scheduleType="N" years="" months="" days="1-LAST" weekdays="" hours="22" minutes="30" period="" periodStart="2013-01-01">
+						<job name="EXP_PASS" class="com.pyrube.admin.tasks.PasswordExpiredJobable" />
+						<job name="CLR_TRIES" class="com.pyrube.admin.tasks.AttemptsClearJobable" />
+						<job name="EXP_FOOD" class="com.pyrube.hoso.tasks.FoodExpiredJobable" />
+					</jobGroup>
+				</global>
+				<!-- timer tasks will run at the respective timezone as below. -->
+				<timezone id="Asia/Shanghai"></timezone>
+			</timerTask>
+		</TaskConfig>
+		<WeaConfig>
+			<!-- security management -->
+			<security>
+				<!-- if required = true, then user must login first. otherwise user needs to login only when user tries to access a protected page. -->
+				<signon required="true" weaCookieName="weaid" weaCookiePath="/">
+					<signonListeners>
+					</signonListeners>
+					<signoffListeners>
+					</signoffListeners>
+					<localeCookie synchLocaleFromCookie="true">
+						<name>weaLocale</name>
+						<!-- age in seconds. maxAge=-1 then set non-persistent cookie; maxAge=0 then delete cookie. -->
+						<maxAge>2592000</maxAge>
+					</localeCookie>
+					<cookies>
+						<cookie createOnSignon="true" deleteOnSignoff="true" encrypt="true">
+							<name>SSO-APP-SIGNOFF-WEA</name>
+							<!-- in cookie value you can use $[var] to refer predefined variables: SERVER_URL, SERVER_ROOT, SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, APP_CONTEXT, TIMESTAMP  -->
+							<value>$[SERVER_ROOT]/$[APP_CONTEXT]/signoff.do?reason=sso_signoff&amp;ts=$[TIMESTAMP]</value>
+							<!-- default domain is current server name. 
+							you may use the domain or sub-domain of the server. 
+							if attribute useServerDomain = true, then use the domain of the server (for server h.tao.pyrube.com, domain is .tao.pyrube.com), 
+							or if attribute subDomainLevel(at least 2) is present, then use the sub-domain of the server on the given level 
+							(for server h.tao.pyrube.com, level 2 sub-domain is .pyrube.com). if both useServerDomain and subDomainLevel present, 
+							then use subDomainLevel. -->
+							<domain useServerDomain="false" />
+							<path>/</path>
+							<!-- maxAge=-1 then set non-persistent cookie. maxAge=0 then delete cookie. -->
+							<maxAge>-1</maxAge>
+						</cookie>
+					</cookies>
+				</signon>
+				<sso cookieName="weasso">
+					<sessionTimeoutMinutes>30</sessionTimeoutMinutes>
+					<sessionTimeoutUrl>/jsp/sso_session_timeout.jsp</sessionTimeoutUrl>
+					<sessionErrorUrl>/jsp/sso_session_error.jsp</sessionErrorUrl>
+				</sso>
+				<captcha enabled="true">
+					<codeLength>4</codeLength>
+					<mimeType>image/png</mimeType>
+					<imageWidth>100</imageWidth>
+					<imageHeight>36</imageHeight>
+					<charWidth>18</charWidth>
+					<charPosY>25</charPosY>
+					<fontSize>25</fontSize>
+					<availableChars>ABCDEFGHIJKLMNOPQRSTUVWXYZ34678</availableChars>
+				</captcha>
+				<!-- Indicates to the browser whether cookies should only be sent using a secure protocol, such as HTTPS or SSL -->
+				<useSecureCookie>${USE_SECURE_COOKIE}</useSecureCookie>
+				<!-- Indicates to the browser whether cookies can only be set and retrieved by http server (browser can not view cookie using javascript) -->
+				<useHttpOnlyCookie>${USE_HTTPONLY_COOKIE}</useHttpOnlyCookie>
+				<!-- whether restrict http request http method -->
+				<restrictHttpMethod>true</restrictHttpMethod>
+				<!-- Defense csrf attack -->
+				<useCsrfValidate>${USE_CSRF_VALIDATE}</useCsrfValidate>
+				<csrfTokenName>${CSRF_TOKEN_NAME}</csrfTokenName>
+			</security>
+			<servlet>
+				<theme system="DEFAULT" >
+					<names>DEFAULT,DARK</names>
+					<cookie enabled="true">
+						<name>weaTheme</name>
+						<!-- default domain is current server name. 
+						you may use the domain or sub-domain of the server. 
+						if attribute useServerDomain = true, then use the domain of the server (for server host.tao.pyrube.com, domain is .tao.pyrube.com), 
+						or if attribute subDomainLevel(at least 2) is present, then use the sub-domain of the server on the given level 
+						(for server host.tao.pyrube.com, level 2 sub-domain is .pyrube.com). if both useServerDomain and subDomainLevel present, 
+						then use subDomainLevel. -->
+						<domain useServerDomain="false" />
+						<path>/</path>
+						<!-- age in seconds. maxAge=-1 then set non-persistent cookie; maxAge=0 then delete cookie. -->
+						<maxAge>2592000</maxAge>
+					</cookie>
+				</theme>
+			</servlet>
+			<pageCharEncoding>UTF-8</pageCharEncoding>
+			<defaultHtmlEscaping>true</defaultHtmlEscaping>
+		</WeaConfig>
+	</config-content>
+</pyrube-config>
