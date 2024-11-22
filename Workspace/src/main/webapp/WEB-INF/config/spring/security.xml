@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+	
+	<global-method-security pre-post-annotations="enabled"/>
+	
+	<http auto-config="false" entry-point-ref="authenticationEntryPoint" 
+			access-decision-manager-ref="accessDecisionManager">
+		<csrf disabled="true" />
+		
+		<headers>
+			<frame-options policy="SAMEORIGIN" />
+		</headers>
+		
+		<logout logout-url="/authen/signoff" invalidate-session="true" success-handler-ref="weaSignoffSucessHandler" />
+		<intercept-url pattern="/user/details/**" access="isAuthenticated()" />
+		<intercept-url pattern="/acct/**" access="isAuthenticated()" />
+		<intercept-url pattern="/admin/**" access="isAuthenticated()" />
+		<intercept-url pattern="/dict/**" access="isAuthenticated()" />
+		<intercept-url pattern="/txn/**" access="isAuthenticated()" />
+		<intercept-url pattern="/**" access="permitAll" />
+		
+		<access-denied-handler ref="accessDeniedHandler" />
+		
+		<custom-filter position="ANONYMOUS_FILTER" ref="weaAnonymousAuthenticationFilter" />
+		<anonymous enabled="false" />
+		<custom-filter before="LOGOUT_FILTER" ref="weaAuthenticationWebContextFilter" />
+		<custom-filter position="FORM_LOGIN_FILTER" ref="signonAuthenticationFilter" />
+		<custom-filter before="BASIC_AUTH_FILTER" ref="passwordForceChangeAuthenticationFilter" />
+		<custom-filter position="BASIC_AUTH_FILTER" ref="profileModificationAuthenticationFilters" />
+		<custom-filter position="LAST" ref="weaAuthenticationUserProfileFilter" />
+	</http>
+	
+	<beans:bean id="requestMatcher" class="com.pyrube.wea.security.core.DefaultAuthenticationRequestMatcher">
+		<beans:property name="matched" value="true"/>
+	</beans:bean>
+	
+	<beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:constructor-arg value="/authen/signon"/>
+	</beans:bean>
+	
+	<beans:bean id="weaAuthenticationWebContextFilter" class="com.pyrube.wea.security.core.WeaAuthenticationWebContextFilter"/>
+	<beans:bean id="weaAuthenticationUserProfileFilter" class="com.pyrube.wea.security.core.WeaAuthenticationUserProfileFilter"/>
+	<beans:bean id="weaSignoffSucessHandler" class="com.pyrube.wea.security.core.WeaSignoffSucessHandler">
+		<beans:property name="defaultTargetUrl" value="/authen/signoff/success"/>
+	</beans:bean>
+	
+	<!-- Anonymous-authentication Filter -->
+	<beans:bean id="weaAnonymousAuthenticationFilter" class="com.pyrube.wea.security.core.WeaAnonymousAuthenticationFilter">
+		<beans:constructor-arg index="0">
+			<beans:bean class="com.pyrube.wea.security.core.WeaUserDetails" />
+		</beans:constructor-arg>
+	</beans:bean>
+	
+	<!-- Sign-on Authentication Filter -->
+	<beans:bean id="signonAuthenticationFilter" class="com.pyrube.wea.security.core.SignonAuthenticationFilter">
+		<beans:property name="authenticationDetailsSource" ref="weaAuthenticationDetailsSource" />
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager" />
+		<beans:property name="requiresAuthenticationRequestMatcher">
+			<beans:bean class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+				<beans:constructor-arg index="0" value="/authen/signon/check"/>
+				<beans:constructor-arg index="1" value="POST"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="continueChainBeforeSuccessfulAuthentication" value="false"/>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean class="com.pyrube.wea.security.core.SignonAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="/authen/signon/failed"/>
+				<beans:property name="defaultCredentialsExpiredUrl" value="/authen/forceChangePassword"/>
+				<beans:property name="defaultCredentialsInitializedUrl" value="/authen/forceChangePassword"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="defaultTargetUrl" value="/acct/home"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="requestMatcher" ref="requestMatcher"/>
+	</beans:bean>
+	
+	<!-- Password Force-Change Authentication Filter -->
+	<beans:bean id="passwordForceChangeAuthenticationFilter" class="com.pyrube.wea.security.core.PasswordForceChangeAuthenticationFilter">
+		<beans:property name="authenticationDetailsSource" ref="weaAuthenticationDetailsSource" />
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager" />
+		<beans:property name="requiresAuthenticationRequestMatcher">
+			<beans:bean class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+				<beans:constructor-arg index="0" value="/authen/forceChangePassword/check"/>
+				<beans:constructor-arg index="1" value="POST"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="continueChainBeforeSuccessfulAuthentication" value="false"/>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean class="com.pyrube.wea.security.core.UserOnboardingAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="/authen/forceChangePassword/failed"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="defaultTargetUrl" value="/authen/forceChangePassword/success"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="requestMatcher" ref="requestMatcher"/>
+	</beans:bean>
+
+	<!-- Profile Modification Custom Filters -->
+	<beans:bean id="profileModificationAuthenticationFilters" class="org.springframework.web.filter.CompositeFilter">
+		<beans:property name="filters">
+			<beans:list>
+				<beans:ref bean="passwordModificationAuthenticationFilter" />
+				<beans:ref bean="mobileModificationAuthenticationFilter" />
+				<beans:ref bean="emailModificationAuthenticationFilter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	<!-- Password Modification Authentication Filter -->
+	<beans:bean id="passwordModificationAuthenticationFilter" class="com.pyrube.wea.security.core.PasswordModificationAuthenticationFilter">
+		<beans:property name="authenticationDetailsSource" ref="weaAuthenticationDetailsSource" />
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager" />
+		<beans:property name="requiresAuthenticationRequestMatcher">
+			<beans:bean class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+				<beans:constructor-arg index="0" value="/acct/changePassword/check"/>
+				<beans:constructor-arg index="1" value="POST"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="continueChainBeforeSuccessfulAuthentication" value="false"/>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean class="com.pyrube.wea.security.core.ProfileModificationAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="/acct/changePassword/failed"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="defaultTargetUrl" value="/acct/changePassword/success"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="requestMatcher" ref="requestMatcher"/>
+	</beans:bean>
+	<!-- Mobile Modification Authentication Filter -->
+	<beans:bean id="mobileModificationAuthenticationFilter" class="com.pyrube.wea.security.core.MobileModificationAuthenticationFilter">
+		<beans:property name="authenticationDetailsSource" ref="weaAuthenticationDetailsSource" />
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager" />
+		<beans:property name="requiresAuthenticationRequestMatcher">
+			<beans:bean class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+				<beans:constructor-arg index="0" value="/acct/changeMobile/check"/>
+				<beans:constructor-arg index="1" value="POST"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="continueChainBeforeSuccessfulAuthentication" value="false"/>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean class="com.pyrube.wea.security.core.ProfileModificationAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="/acct/changeMobile/failed"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="defaultTargetUrl" value="/acct/changeMobile/success"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="requestMatcher" ref="requestMatcher"/>
+	</beans:bean>
+	<!-- Email Modification Authentication Filter -->
+	<beans:bean id="emailModificationAuthenticationFilter" class="com.pyrube.wea.security.core.EmailModificationAuthenticationFilter">
+		<beans:property name="authenticationDetailsSource" ref="weaAuthenticationDetailsSource" />
+		<beans:property name="authenticationManager" ref="org.springframework.security.authenticationManager" />
+		<beans:property name="requiresAuthenticationRequestMatcher">
+			<beans:bean class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+				<beans:constructor-arg index="0" value="/acct/changeEmail/check"/>
+				<beans:constructor-arg index="1" value="POST"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="continueChainBeforeSuccessfulAuthentication" value="false"/>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean class="com.pyrube.wea.security.core.ProfileModificationAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="/acct/changeEmail/failed"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="defaultTargetUrl" value="/acct/changeEmail/success"/>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="requestMatcher" ref="requestMatcher"/>
+	</beans:bean>
+
+	<beans:bean id="weaAuthenticationDetailsSource" class="com.pyrube.wea.security.core.WeaAuthenticationDetailsSource" />
+
+	<!-- Authentication Manager - Multi-provider -->
+	<!-- <authentication-manager alias="authenticationManager">
+		<authentication-provider ref="signonAuthenticationProvider" />
+		<authentication-provider ref="forcePasswordModificationAuthenticationProvider" />
+		<authentication-provider ref="passwordModificationAuthenticationProvider" />
+		<authentication-provider ref="mobileModificationAuthenticationProvider" />
+		<authentication-provider ref="emailModificationAuthenticationProvider" />
+	</authentication-manager> -->
+	<!-- Use the following authenticationManager definition, instead of authentication-manager as above  -->
+	<!-- It's for custom authenticationEventPublisher. How to customize event publisher with authentication-manager? -->
+	<beans:bean id="org.springframework.security.authenticationManager" 
+		class="org.springframework.security.authentication.ProviderManager">
+		<beans:constructor-arg index="0" type="java.util.List">
+			<beans:list>
+				<beans:ref bean="signonAuthenticationProvider" />
+				<beans:ref bean="forcePasswordModificationAuthenticationProvider" />
+				<beans:ref bean="passwordModificationAuthenticationProvider" />
+				<beans:ref bean="mobileModificationAuthenticationProvider" />
+				<beans:ref bean="emailModificationAuthenticationProvider" />
+			</beans:list>
+		</beans:constructor-arg>
+		<beans:property name="authenticationEventPublisher" ref="weaAuthenticationEventPublisher" />
+	</beans:bean>
+	<!-- Signon Authentication Provider -->
+	<beans:bean id="signonAuthenticationProvider" class="com.pyrube.wea.security.core.WeaDaoAuthenticationProvider">
+		<beans:property name="passwordEncoder">
+			<beans:bean class="com.pyrube.wea.security.core.WeaPasswordEncoder"/>
+		</beans:property>
+		<beans:property name="messageSource" ref="messageSource"/>
+		<beans:property name="userDetailsService" ref="standardUserDetailsService" />
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="preAuthenticationChecks" ref="accountStatusChecker" />
+		<beans:property name="postAuthenticationChecks" ref="accountCredentialsChecker" />
+		<beans:property name="requestMatcher">
+			<beans:bean class="com.pyrube.wea.security.core.DefaultAuthenticationRequestMatcher">
+				<beans:property name="usedFor" value="signon"/>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	<beans:bean id="standardUserDetailsService" class="com.pyrube.wea.security.core.StandardUserDetailsService">
+		<beans:property name="securityManager" ref="securityManager" />
+	</beans:bean>
+	<beans:bean id="accountStatusChecker" class="com.pyrube.wea.security.core.AccountStatusChecker" />
+	<beans:bean id="accountCredentialsChecker" class="com.pyrube.wea.security.core.AccountCredentialsChecker" />
+	<!-- Force Password Modification Authentication Providers -->
+	<beans:bean id="forcePasswordModificationAuthenticationProvider" class="com.pyrube.wea.security.core.WeaDaoAuthenticationProvider">
+		<beans:property name="passwordEncoder">
+			<beans:bean class="com.pyrube.wea.security.core.WeaPasswordEncoder"/>
+		</beans:property>
+		<beans:property name="messageSource" ref="messageSource"/>
+		<beans:property name="userDetailsService" ref="liteUserDetailsService" />
+		<beans:property name="userOnboardingService" ref="userOnboardingService" />
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="postAuthenticationChecks" ref="nothingChecker" />
+		<beans:property name="requestMatcher">
+			<beans:bean class="com.pyrube.wea.security.core.DefaultAuthenticationRequestMatcher">
+				<beans:property name="usedFor" value="password"/>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	<beans:bean id="userOnboardingService" class="com.pyrube.wea.security.core.WeaUserOnboardingService">
+		<beans:property name="securityManager" ref="securityManager" />
+	</beans:bean>
+	<!-- Account Profile Modification Authentication Providers -->
+	<beans:bean id="passwordModificationAuthenticationProvider" class="com.pyrube.wea.security.core.WeaDaoAuthenticationProvider">
+		<beans:property name="passwordEncoder">
+			<beans:bean class="com.pyrube.wea.security.core.WeaPasswordEncoder"/>
+		</beans:property>
+		<beans:property name="messageSource" ref="messageSource"/>
+		<beans:property name="userDetailsService" ref="liteUserDetailsService" />
+		<beans:property name="accountProfileService" ref="accountProfileService" />
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="postAuthenticationChecks" ref="nothingChecker" />
+		<beans:property name="requestMatcher">
+			<beans:bean class="com.pyrube.wea.security.core.DefaultAuthenticationRequestMatcher">
+				<beans:property name="usedFor" value="password"/>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	<beans:bean id="mobileModificationAuthenticationProvider" class="com.pyrube.wea.security.core.WeaDaoAuthenticationProvider">
+		<beans:property name="passwordEncoder">
+			<beans:bean class="com.pyrube.wea.security.core.WeaPasswordEncoder"/>
+		</beans:property>
+		<beans:property name="messageSource" ref="messageSource"/>
+		<beans:property name="userDetailsService" ref="liteUserDetailsService" />
+		<beans:property name="accountProfileService" ref="accountProfileService" />
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="postAuthenticationChecks" ref="nothingChecker" />
+		<beans:property name="requestMatcher">
+			<beans:bean class="com.pyrube.wea.security.core.DefaultAuthenticationRequestMatcher">
+				<beans:property name="usedFor" value="mobile"/>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	<beans:bean id="emailModificationAuthenticationProvider" class="com.pyrube.wea.security.core.WeaDaoAuthenticationProvider">
+		<beans:property name="passwordEncoder">
+			<beans:bean class="com.pyrube.wea.security.core.WeaPasswordEncoder"/>
+		</beans:property>
+		<beans:property name="messageSource" ref="messageSource"/>
+		<beans:property name="userDetailsService" ref="liteUserDetailsService" />
+		<beans:property name="accountProfileService" ref="accountProfileService" />
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="postAuthenticationChecks" ref="nothingChecker" />
+		<beans:property name="requestMatcher">
+			<beans:bean class="com.pyrube.wea.security.core.DefaultAuthenticationRequestMatcher">
+				<beans:property name="usedFor" value="email"/>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	
+	<beans:bean id="liteUserDetailsService" class="com.pyrube.wea.security.core.LiteUserDetailsService">
+		<beans:property name="securityManager" ref="securityManager" />
+	</beans:bean>
+	<beans:bean id="accountProfileService" class="com.pyrube.wea.security.core.WeaAccountProfileService">
+		<beans:property name="securityManager" ref="securityManager" />
+	</beans:bean>
+	
+	<beans:bean id="nothingChecker" class="com.pyrube.wea.security.core.NothingChecker" />
+	
+	<beans:bean id="expressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler">
+		<beans:property name="defaultRolePrefix" value="" />
+	</beans:bean>
+	
+	<beans:bean id="expressionVoter" class="org.springframework.security.web.access.expression.WebExpressionVoter">
+		<beans:property name="expressionHandler" ref="expressionHandler" />  
+	</beans:bean>
+	
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:constructor-arg index="0" type="java.util.List">  
+			<beans:list>
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter" >
+					<beans:property name="rolePrefix" value=""/>
+				</beans:bean>
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+				<beans:ref bean="expressionVoter" />
+			</beans:list>
+		</beans:constructor-arg>
+		<beans:property name="allowIfAllAbstainDecisions" value="false" />
+	</beans:bean>
+	
+	<beans:bean id="accessDeniedHandler" class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+		<beans:property name="errorPage" value="/message/access/denied" />
+	</beans:bean>
+	
+	<beans:bean id="securityManager" class="com.pyrube.one.app.security.SecurityManagerFactory" factory-method="getSecurityManager" />
+	
+	<!-- Publisher -->
+	<beans:bean id="weaAuthenticationEventPublisher" class="com.pyrube.wea.security.core.WeaAuthenticationEventPublisher" />
+	<!-- Listeners -->
+	<beans:bean id="weaAuthenticationEventListener" class="com.pyrube.wea.security.core.WeaAuthenticationEventListener" />
+	<beans:bean id="authorizationListener" class="org.springframework.security.access.event.LoggerListener" /> 
+	
+	<beans:bean id="weaAppContextHolder" class="com.pyrube.wea.security.core.WeaAppContextHolder" factory-method="getInstance"/>
+	
+</beans:beans>

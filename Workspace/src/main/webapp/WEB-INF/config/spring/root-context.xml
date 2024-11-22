@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+	http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd">
+
+	<!--
+		CSRF protection. Here we only include the CsrfFilter instead of all of Spring Security.
+		See http://docs.spring.io/spring-security/site/docs/3.2.x/reference/htmlsingle/#csrf for more information on
+		Spring Security's CSRF protection
+	-->
+	<bean id="csrfFilter" class="org.springframework.security.web.csrf.CsrfFilter">
+		<constructor-arg>
+			<bean class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
+		</constructor-arg>
+	</bean>
+	
+	<!--
+		Provides automatic CSRF token inclusion when using Spring MVC Form tags or Thymeleaf. See
+		http://localhost:8080/#forms and form.jsp for examples
+	-->
+	<bean id="requestDataValueProcessor" class="org.springframework.security.web.servlet.support.csrf.CsrfRequestDataValueProcessor"/>
+	
+</beans>

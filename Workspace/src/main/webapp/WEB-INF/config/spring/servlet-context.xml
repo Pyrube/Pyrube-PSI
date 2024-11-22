@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+	
+	<!-- Enables default servlet -->
+	<default-servlet-handler/>
+	
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	<security:global-method-security pre-post-annotations="enabled" />
+
+	<context:component-scan base-package="com.pyrube" />
+
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven conversion-service="conversionService" enable-matrix-variables="true">
+		<argument-resolvers>
+			<beans:bean class="com.pyrube.wea.ui.resolvers.core.WeaHandlerMethodArgumentResolver"/>
+		</argument-resolvers>
+		<async-support default-timeout="3000">
+			<callable-interceptors>
+				<beans:bean class="com.pyrube.wea.interceptors.core.WeaTimeoutCallableProcessingInterceptor" />
+			</callable-interceptors>
+		</async-support>
+		<message-converters register-defaults="true">
+			<beans:bean class="com.pyrube.wea.format.converters.LocalizationJackson2HttpMessageConverter">
+				<beans:property name="objectMapper">
+					<beans:bean class="com.pyrube.wea.format.converters.LocalizedObjectMapper"></beans:bean>
+				</beans:property>
+			</beans:bean>
+		</message-converters>
+	</annotation-driven>
+	
+	<interceptors>
+		<beans:bean class="com.pyrube.wea.interceptors.core.WeaRequestHandlerInterceptor"/>
+	</interceptors>
+	
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory--> 
+	<resources mapping="/resources/**" location="/resources/" />
+	
+	<!-- View Resolver  -->
+	<beans:bean id="tilesConfigurer" 
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<beans:property name="definitions">
+			<beans:list>
+				<beans:value>/WEB-INF/config/tiles/defs-wea.xml</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	
+	<!-- Resolves views selected for rendering by @Controllers to .page/.box resources in the tiles configure -->
+	<beans:bean id="weaDeviceDelegatingViewResolver" class="com.pyrube.wea.ui.resolvers.core.WeaDeviceDelegatingViewResolver">
+		<beans:constructor-arg>
+			<beans:bean id="tilesResolver" 
+				class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+				<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"></beans:property>
+			</beans:bean>
+		</beans:constructor-arg>
+		<beans:property name="order" value="#{T(org.springframework.core.Ordered).HIGHEST_PRECEDENCE}" />
+		<beans:property name="enableFallback" value="true" />
+		<beans:property name="normalPrefix" value="laptop." />
+		<beans:property name="mobilePrefix" value="mobile." />
+		<beans:property name="tabletPrefix" value="tablet." />
+		<beans:property name="hrSuffix" value=".page" />
+		<beans:property name="xhrSuffix" value=".box" />
+	</beans:bean>
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="order" value="#{weaDeviceDelegatingViewResolver.order+1}" />
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- Resolves theme for holding with cookie and session  -->
+	<beans:bean id="themeResolver" class="com.pyrube.wea.ui.resolvers.core.WeaThemeResolver" />
+	
+	<!-- Message sources -->
+	<beans:bean id="messageSource" class="com.pyrube.wea.context.core.WeaMessageSource" />
+	
+	<!-- Only needed because we install custom converters to support the examples in the org.springframewok.samples.mvc.convert package -->
+	<beans:bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<beans:property name="formatters">
+			<beans:list>
+				<beans:bean class="com.pyrube.wea.format.core.MaskFormatAnnotationFormatterFactory" />
+			</beans:list>
+		</beans:property>
+		<beans:property name="converters">
+			<beans:list>
+				<beans:bean class="com.pyrube.wea.format.converters.in.DateConverter"/>
+				<beans:bean class="com.pyrube.wea.format.converters.in.BigDecimalConverter"/>
+				<beans:bean class="com.pyrube.wea.format.converters.in.DoubleConverter"/>
+				<beans:bean class="com.pyrube.wea.format.converters.in.FloatConverter"/>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<!-- Only needed because we require fileupload in the org.springframework.upload package -->
+	<beans:bean id="multipartResolver" class="com.pyrube.wea.ui.resolvers.core.WeaMultipartResolver">
+		<beans:property name="defaultEncoding" value="UTF-8" />
+		<beans:property name="maxUploadSize" value="#{1*1024*1024}" />
+		<beans:property name="maxInMemorySize" value="#{1*1024*1024}" />
+		<beans:property name="uploadTempDir" value="temp/upload" />
+	</beans:bean>
+
+	<!-- handle exception -->
+	<!-- beans:bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver" p:order="2" /> -->
+	<!-- handle exception -->
+	<beans:bean id="exceptionResolver" class="com.pyrube.wea.ui.resolvers.core.WeaMappingExceptionResolver" p:order="1">  
+		<beans:property name="defaultErrorView">
+			<beans:value>message.app_messages</beans:value>
+		</beans:property>
+		<beans:property name="defaultStatusCode">
+			<beans:value>500</beans:value>
+		</beans:property>
+		<beans:property name="warnLogCategory">
+			<beans:value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver</beans:value>
+		</beans:property>
+		<beans:property name="exceptionMappings">
+			<beans:props>
+				<beans:prop key="com.pyrube.one.app.AppException">message.app_messages</beans:prop>
+				<beans:prop key="java.lang.RuntimeException">message.app_messages</beans:prop>
+				<beans:prop key="java.lang.Exception">message.app_messages</beans:prop>
+				<beans:prop key="org.springframework.web.multipart.MaxUploadSizeExceededException">message.upload_oversize</beans:prop>
+				<beans:prop key="org.springframework.security.access.AccessDeniedException">message.access_denied</beans:prop>
+			</beans:props>
+		</beans:property>
+	 </beans:bean>
+	
+	<!-- E-Mail -->
+	<context:property-placeholder location="/WEB-INF/config/spring/notification-email.properties" ignore-unresolvable="true" />
+
+	<beans:bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<beans:property name="defaultEncoding" value="${email.defaultEncoding}" />
+		<beans:property name="host" value="${email.host}" />
+		<beans:property name="port" value="${email.port}" />
+		<beans:property name="username" value="${email.username}" />
+		<beans:property name="password" value="${email.password}" />
+		<beans:property name="javaMailProperties">
+			<beans:props>
+				<beans:prop key="mail.debug">${email.debug}</beans:prop>
+				<beans:prop key="mail.smtp.auth">${email.auth}</beans:prop>
+				<beans:prop key="mail.smtp.timeout">${email.timeout}</beans:prop>
+				<beans:prop key="sendFrom">${email.sendFrom}</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+	
+	<!-- Maps '/' requests to the 'home' view -->
+	<!-- <mvc:view-controller path="/" view-name="home"/> -->
+
+	<!-- <task:annotation-driven /> -->
+	
+</beans:beans>

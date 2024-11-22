@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+-->
+
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+	"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<!-- Definitions for Tiles documentation   -->
+<tiles-definitions>
+	<!-- =======================================================  -->
+	<!-- Laptop Templates Definitions                             -->
+	<!-- =======================================================  -->
+	<definition name="laptop.template.lazy" template="/WEB-INF/views/com/pyrube/wea/template/laptop/lazy.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/com/pyrube/wea/template/laptop/inc/header.jsp" />
+		<put-attribute name="menubar" value="/WEB-INF/views/com/pyrube/wea/template/laptop/inc/menubar.jsp" />
+		<put-attribute name="body" value="blank" />
+		<put-attribute name="footer" value="/WEB-INF/views/com/pyrube/wea/template/laptop/inc/footer.jsp" />
+		<put-attribute name="favicon" value="/resources/com/pyrube/wea/about/images/icons/favicon.ico" />
+		<put-list-attribute name="themes">
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/smartmenus.core.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/smartmenus.simple.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jquery.datetimepicker.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jquery.responsiveTabs.layout.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jquery.responsiveTabs.style.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jsea.one.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jsea.element.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jsea.component.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/wea.layout.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/wea.style.css" />
+		</put-list-attribute>
+		<put-list-attribute name="javascripts">
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery_1.11.3.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.form_3.51.0.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.smartmenus_0.9.7.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.alphanum_1.0.17.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.datetimepicker_2.4.5.full.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.responsiveTabs_1.3.6.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/bootstrap.tooltip_3.3.5.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/big.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/system.ext.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/jsea.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/util/collections.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/app/i18n/bundle.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/app/i18n/format.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.smartmenus.jsea.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/components.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/popup.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/form.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/grid.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seael/elements.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seael/fields.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/util/hasher.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/util/validator.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/app/memo/notes_pad.js" />
+		</put-list-attribute>
+	</definition>
+	<definition name="laptop.template.page" template="/WEB-INF/views/com/pyrube/wea/template/laptop/page.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/com/pyrube/wea/template/laptop/inc/header.jsp" />
+		<put-attribute name="menubar" value="/WEB-INF/views/com/pyrube/wea/template/laptop/inc/menubar.jsp" />
+		<put-attribute name="body" value="blank" />
+		<put-attribute name="footer" value="/WEB-INF/views/com/pyrube/wea/template/laptop/inc/footer.jsp" />
+		<put-attribute name="favicon" value="/resources/com/pyrube/wea/about/images/icons/favicon.ico" />
+		<put-list-attribute name="themes">
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/smartmenus.core.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/smartmenus.simple.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jquery.datetimepicker.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jquery.responsiveTabs.layout.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jquery.responsiveTabs.style.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jsea.one.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jsea.element.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/jsea.component.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/wea.layout.css" />
+			<add-attribute value="/resources/com/pyrube/wea/lofe/stylesheet/wea.style.css" />
+		</put-list-attribute>
+		<put-list-attribute name="javascripts">
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery_1.11.3.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.form_3.51.0.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.smartmenus_0.9.7.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.alphanum_1.0.17.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.datetimepicker_2.4.5.full.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.responsiveTabs_1.3.6.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/bootstrap.tooltip_3.3.5.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/big.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/system.ext.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/jsea.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/util/collections.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/app/i18n/bundle.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/app/i18n/format.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/lang/core/jquery.smartmenus.jsea.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/components.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/popup.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/form.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seaco/grid.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seael/elements.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/uit/seael/fields.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/util/hasher.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/util/validator.js" />
+			<add-attribute value="/resources/com/pyrube/jsea/app/memo/notes_pad.js" />
+		</put-list-attribute>
+	</definition>
+	<definition name="laptop.template.import" template="/WEB-INF/views/com/pyrube/wea/template/laptop/import.jsp">
+		<put-attribute name="body" value="blank" />
+		<put-list-attribute name="javascripts">
+			<add-attribute value="/resources/com/pyrube/jsea/util/transfer.js" />
+		</put-list-attribute>
+	</definition>
+	<definition name="laptop.template.box" template="/WEB-INF/views/com/pyrube/wea/template/laptop/box.jsp">
+		<put-attribute name="body" value="blank" />
+	</definition>
+	<definition name="laptop.template.popup" template="/WEB-INF/views/com/pyrube/wea/template/laptop/popup.jsp">
+		<put-attribute name="body" value="blank" />
+	</definition>
+	<definition name="laptop.template.search" template="/WEB-INF/views/com/pyrube/wea/template/laptop/search.jsp">
+		<put-attribute name="body" value="blank" />
+	</definition>
+	<definition name="laptop.template.exception" template="/WEB-INF/views/com/pyrube/wea/template/laptop/exception.jsp">
+		<put-attribute name="body" value="blank" />
+	</definition>
+	<definition name="laptop.template.error" template="/WEB-INF/views/com/pyrube/wea/template/laptop/error.jsp">
+		<put-attribute name="body" value="blank" />
+	</definition>
+	<!-- =======================================================  -->
+	<!-- General views definitions for WEA                        -->
+	<!-- =======================================================  -->
+	<definition name="*.main.page" extends="{1}.template.lazy">
+		<put-attribute name="body" value="/WEB-INF/views/main.jsp" />
+	</definition>
+	<definition name="*.signon.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/signon.jsp" />
+	</definition>
+	<definition name="*.signon.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/signon.jsp" />
+	</definition>
+	<definition name="*.signoff.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/signoff.jsp" />
+	</definition>
+	<definition name="*.authen.*.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/authen/{2}.jsp" />
+	</definition>
+	<definition name="*.authen.*.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/authen/{2}.jsp" />
+	</definition>
+	<definition name="*.acct.*.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/acct/{2}.jsp" />
+	</definition>
+	<definition name="*.acct.*.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/acct/{2}.jsp" />
+	</definition>
+	<definition name="*.memo.*.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/memo/{2}.jsp" />
+	</definition>
+	<definition name="*.user.user_*.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/user/user_{2}.jsp" />
+	</definition>
+	<definition name="*.user.user_*.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/user/user_{2}.jsp" />
+	</definition>
+	<definition name="*.message.app_messages.box" extends="{1}.template.exception">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/message/app_messages.jsp" />
+	</definition>
+	<definition name="*.message.access_denied.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/message/access_denied.jsp" />
+	</definition>
+	<definition name="*.message.access_denied.box" extends="{1}.template.error">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/message/access_denied.jsp" />
+	</definition>
+	<definition name="*.message.upload_oversize.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/message/upload_oversize.jsp" />
+	</definition>
+	<definition name="*.message.upload_oversize.box" extends="{1}.template.error">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/message/upload_oversize.jsp" />
+	</definition>
+	<definition name="*.message.http_*.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/message/http_{2}.jsp" />
+	</definition>
+	<definition name="*.message.http_*.box" extends="{1}.template.error">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/wea/app/message/http_{2}.jsp" />
+	</definition>
+	<!-- =======================================================  -->
+	<!-- General views definitions for TXN Details                -->
+	<!-- =======================================================  -->
+	<definition name="*.*.*.details.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/detail/{3}_details.jsp" />
+	</definition>
+	<definition name="*.*.*.detail.view.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/detail/{3}_detail_view.jsp" />
+	</definition>
+	<definition name="*.*.*.detail.add.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/detail/{3}_detail_add.jsp" />
+	</definition>
+	<definition name="*.*.*.detail.modify.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/detail/{3}_detail_modify.jsp" />
+	</definition>
+	<definition name="*.*.*.details.undo.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/detail/{3}_details_undo.jsp" />
+	</definition>
+	<!-- =======================================================  -->
+	<!-- General views definitions for Data Setup                 -->
+	<!-- =======================================================  -->
+	<definition name="*.*.*.grid.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_list.jsp" />
+	</definition>
+	<definition name="*.*.*.grid.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_list.jsp" />
+	</definition>
+	<definition name="*.*.*.lookup.box" extends="{1}.template.popup">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_lookup.jsp" />
+	</definition>
+	<definition name="*.*.*.search.box" extends="{1}.template.search">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_search.jsp" />
+	</definition>
+	<definition name="*.*.*.view.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_view.jsp" />
+	</definition>
+	<definition name="*.*.*.view.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_view.jsp" />
+	</definition>
+	<definition name="*.*.*.create.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_create.jsp" />
+	</definition>
+	<definition name="*.*.*.create.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_create.jsp" />
+	</definition>
+	<definition name="*.*.*.duplicate.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_duplicate.jsp" />
+	</definition>
+	<definition name="*.*.*.duplicate.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_duplicate.jsp" />
+	</definition>
+	<definition name="*.*.*.import.box" extends="{1}.template.import">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_import.jsp" />
+	</definition>
+	<definition name="*.*.*.modify.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_modify.jsp" />
+	</definition>
+	<definition name="*.*.*.update.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_update.jsp" />
+	</definition>
+	<definition name="*.*.*.update.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_update.jsp" />
+	</definition>
+	<definition name="*.*.*.delete.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_delete.jsp" />
+	</definition>
+	<definition name="*.*.*.delete.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_delete.jsp" />
+	</definition>
+	<definition name="*.*.*.continue.J.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_continue_created.jsp" />
+	</definition>
+	<definition name="*.*.*.continue.J.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_continue_created.jsp" />
+	</definition>
+	<definition name="*.*.*.continue.T.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_continue_updated.jsp" />
+	</definition>
+	<definition name="*.*.*.continue.T.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_continue_updated.jsp" />
+	</definition>
+	<definition name="*.*.*.continue.N.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_delete.jsp" />
+	</definition>
+	<definition name="*.*.*.continue.N.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_delete.jsp" />
+	</definition>
+	<definition name="*.*.*.verify.C.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_verify_created.jsp" />
+	</definition>
+	<definition name="*.*.*.verify.C.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_verify_created.jsp" />
+	</definition>
+	<definition name="*.*.*.verify.U.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_verify_updated.jsp" />
+	</definition>
+	<definition name="*.*.*.verify.U.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_verify_updated.jsp" />
+	</definition>
+	<definition name="*.*.*.verify.D.page" extends="{1}.template.page">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_verify_deleted.jsp" />
+	</definition>
+	<definition name="*.*.*.verify.D.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_verify_deleted.jsp" />
+	</definition>
+	<!-- =======================================================  -->
+	<!-- General views definitions for TXN Application            -->
+	<!-- =======================================================  -->
+	<definition name="*.*.*.referred.box" extends="{1}.template.box">
+		<put-attribute name="body" value="/WEB-INF/views/com/pyrube/{2}/{3}/{3}_referred.jsp" />
+	</definition>
+</tiles-definitions>
