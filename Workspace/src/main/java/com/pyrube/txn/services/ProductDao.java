@@ -2,6 +2,7 @@ package com.pyrube.txn.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +39,19 @@ public class ProductDao extends Dao<Product, String> {
 			params.put("prodName", "%" + prodName + "%");
 		}
 		String spuName = criteria.getSpuName();
-		if (!Strings.isEmpty(prodName)) {
+		if (!Strings.isEmpty(spuName)) {
 			script.append(" and s.spuName like :spuName");
 			params.put("spuName", "%" + spuName + "%");
+		}
+		Date marketDateFrom = criteria.getMarketDateFrom();
+		if (marketDateFrom != null) {
+			script.append(" and p.marketDate >= :marketDateFrom");
+			params.put("marketDateFrom", marketDateFrom);
+		}
+		Date marketDateTo = criteria.getMarketDateTo();
+		if (marketDateTo != null) {
+			script.append(" and p.marketDate <= :marketDateTo");
+			params.put("marketDateTo", marketDateTo);
 		}
 		BigDecimal costPriceFrom = criteria.getCostPriceFrom();
 		if (costPriceFrom != null) {

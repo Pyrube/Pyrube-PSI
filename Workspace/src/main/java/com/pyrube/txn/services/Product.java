@@ -35,6 +35,12 @@ public class Product extends Data<String> {
 	@Converting(format = FormatName.DATE)
 	@Column(name = "market_date")
 	private Date marketDate;
+	@Transient
+	@Converting(format = FormatName.DATE)
+	private Date marketDateFrom;
+	@Transient
+	@Converting(format = FormatName.DATE)
+	private Date marketDateTo;
 	@Column(name = "cost_price")
 	private BigDecimal costPrice;
 	@Transient
@@ -130,6 +136,30 @@ public class Product extends Data<String> {
 	 */
 	public void setMarketDate(Date marketDate) {
 		this.marketDate = marketDate;
+	}
+	/**
+	 * @return the marketDateFrom
+	 */
+	public Date getMarketDateFrom() {
+		return marketDateFrom;
+	}
+	/**
+	 * @param marketDateFrom the marketDateFrom to set
+	 */
+	public void setMarketDateFrom(Date marketDateFrom) {
+		this.marketDateFrom = marketDateFrom;
+	}
+	/**
+	 * @return the marketDateTo
+	 */
+	public Date getMarketDateTo() {
+		return marketDateTo;
+	}
+	/**
+	 * @param marketDateTo the marketDateTo to set
+	 */
+	public void setMarketDateTo(Date marketDateTo) {
+		this.marketDateTo = marketDateTo;
 	}
 	/**
 	 * @return the costPrice
